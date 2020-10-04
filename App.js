@@ -1,21 +1,27 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { Store, persistor } from "./redux/store";
+import { PersistGate } from "redux-persist/integration/react";
+import Myprofile from "./components/myProFile/myProfile";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
+import Welcome from "./Welcome";
+import Chatlist from "./components/chatlist/chatlist";
+import Chat from "./components/Chat/Chat";
+import UserDetailView from "./components/userDetailView/userDetailView";
 
-export default function App() {
+function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <React.Fragment>
+      <Provider store={Store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <SafeAreaProvider>
+            <UserDetailView />
+          </SafeAreaProvider>
+        </PersistGate>
+      </Provider>
+    </React.Fragment>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
