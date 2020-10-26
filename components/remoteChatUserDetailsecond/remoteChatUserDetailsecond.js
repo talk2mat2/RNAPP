@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Swiper from "react-native-swiper";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Modal,
   View,
@@ -14,16 +17,15 @@ import {
 } from "react-native";
 import WithLoader from "../Loader/LoaderHoc";
 
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { logOutstart } from "../../redux/action";
 import { Colors } from "../constants/colors";
 const STATUSBAR_HEIGHT = Platform === "ios" ? 20 : StatusBar.currentHeight;
-import { currentUserDetails, loading } from "../../redux/selector";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import EditProfile from "../edit.profile/editProfile";
 
-const Myprofile = (props) => {
+import { TouchableOpacity } from "react-native-gesture-handler";
+// import Chat from "../Chat/Chat";
+
+const RemoteChatUserDetail = (props) => {
+  const { details } = props;
+  const [remoteUser, setRemoteUser] = useState({});
   const [isvisible, setIsvisible] = useState(false);
   const {
     Animals,
@@ -56,16 +58,22 @@ const Myprofile = (props) => {
     _id,
     Age,
     RegisterdDate,
-  } = props.CurrentUser ? props.CurrentUser : 1;
+  } = details ? details : 1;
+  const chatMsg = useSelector((state) => state.chatList);
+  // useEffect(() => {
+  //   const fetchRemoteUserDetail = () => {
+  //     const userDetails = chatMsg[props.id]["remoteUserProfile"]
+  //       ? chatMsg[props.id]["remoteUserProfile"]
+  //       : {};
 
+  //     setRemoteUser(userDetails);
+  //   };
+  //   fetchRemoteUserDetail();
+  // });
   const handleVisibleModal = () => {
     setIsvisible(!isvisible);
   };
-  const handleLogout = () => {
-    // props.navigation.navigate("Welcome");
-    props.logout();
-    props.socket.disconnect();
-  };
+
   const ListUserImage = () => {
     return Pictures ? (
       Pictures.map((item, index) => (
@@ -73,7 +81,7 @@ const Myprofile = (props) => {
           <Image
             style={{ ...styles.tinyLogo }}
             source={{
-              uri: item.url,
+              uri: item.url ? item.url : null,
             }}
           />
         </View>
@@ -85,14 +93,6 @@ const Myprofile = (props) => {
 
   return (
     <View style={styles.Container}>
-      <Modal style={{ flex: 1 }} visible={isvisible} animationType="slide">
-        <View style={{ flex: 1 }}>
-          <EditProfile
-            loading={props.loading}
-            handleVisibleModal={handleVisibleModal}
-          />
-        </View>
-      </Modal>
       <ScrollView style={styles.ScrollViews}>
         <View style={styles.Myprofile}>
           <Swiper
@@ -133,19 +133,21 @@ const Myprofile = (props) => {
               <Text style={{ fontSize: 25, fontWeight: "bold" }}>
                 {firstName} {lastName}
               </Text>
-
               <Text style={styles.smallText}>
                 <Icon name="user" size={12} /> {Age} years
               </Text>
               <Text style={{ ...styles.smallText }}>
                 <Icon name="map-pin" size={12} /> {county}, {state}
               </Text>
-              <Text
-                onPress={handleVisibleModal.bind(this)}
-                style={{ right: 0, position: "absolute" }}
-              >
-                edit profile <Icon name="edit" size={40} />
-              </Text>
+              <View>
+                <MaterialCommunityIcons
+                  onPress={props.setRemoteUserVisible.bind(this, false)}
+                  name="email-edit-outline"
+                  size={40}
+                  color={Colors.main}
+                  style={{ margin: 9 }}
+                />
+              </View>
             </View>
 
             <View
@@ -262,13 +264,6 @@ const Myprofile = (props) => {
                 )}
               </View>
             </View>
-
-            <Button
-              title="logout"
-              onPress={() => {
-                handleLogout();
-              }}
-            />
           </View>
         </View>
       </ScrollView>
@@ -326,10 +321,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapDispatchToProps = (dispatch) => {
-  return { logout: () => dispatch(logOutstart()) };
-};
-const mapStateToProps = (state) => {
-  return { loading: loading(state), CurrentUser: currentUserDetails(state) };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(Myprofile);
+export default RemoteChatUserDetail;

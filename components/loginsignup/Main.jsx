@@ -17,9 +17,9 @@ import NiceTextInput from "../../components/reusables.components/textinputs";
 import SweetButtons from "../../components/reusables.components/buttons";
 import { styles } from "./main.style";
 import SignUp from "./loginScreen";
-import SignUPScreen from './SignUPScreen'
-import LoginScreen from './loginScreen'
-
+import SignUPScreen from "./SignUPScreen";
+import LoginScreen from "./loginScreen";
+import Withoader from "../Loader/LoaderHoc";
 
 const Container = styled.View`
   flex: 1;
@@ -34,16 +34,9 @@ const Texts = styled.Text`
   color: blue;
 `;
 
-
-    
-
-
-
-
 const Main = () => {
-
- 
   const [CurrentView, setCurrentView] = useState({ screen: LoginScreen });
+  const [loading, setLoading] = useState(false);
 
   const textColor =
     CurrentView.screen === LoginScreen ? Colors.white : Colors.orange;
@@ -52,14 +45,8 @@ const Main = () => {
   const textColor2 =
     CurrentView.screen === SignUPScreen ? Colors.white : Colors.orange;
   const BackColor2 =
-    CurrentView.screen === SignUPScreen ? Colors.orange : Colors.white; 
+    CurrentView.screen === SignUPScreen ? Colors.orange : Colors.white;
 
-
-
-
- 
-
-    
   const handlePress = (value) => {
     value === "signup" &&
       setCurrentView({ ...CurrentView, screen: SignUPScreen });
@@ -90,11 +77,16 @@ const Main = () => {
           </View>
         </TouchableOpacity>
       </View>
-      <CurrentView.screen/>
+
+      <CurrentView.screen
+        setLoading={setLoading}
+        handlePress={handlePress}
+        loading={loading}
+      />
     </View>
   );
 };
-export default Main;
+export default Withoader(Main);
 
 const styles2 = StyleSheet.create({
   Text: {

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import Swiper from "react-native-swiper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {
+  Dimensions,
   Modal,
   View,
   StatusBar,
@@ -11,19 +13,21 @@ import {
   Button,
   ScrollView,
   Platform,
+  TouchableOpacity,
 } from "react-native";
 import WithLoader from "../Loader/LoaderHoc";
 
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { logOutstart } from "../../redux/action";
+
 import { Colors } from "../constants/colors";
 const STATUSBAR_HEIGHT = Platform === "ios" ? 20 : StatusBar.currentHeight;
-import { currentUserDetails, loading } from "../../redux/selector";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import EditProfile from "../edit.profile/editProfile";
+import { currentUserDetails } from "../../redux/selector";
 
-const Myprofile = (props) => {
+import Chat from "../Chat.Screeen.second/Chat.Screeen.second";
+
+const Userprofile = (props) => {
+  const [sender, setSender] = useState("");
   const [isvisible, setIsvisible] = useState(false);
   const {
     Animals,
@@ -56,16 +60,12 @@ const Myprofile = (props) => {
     _id,
     Age,
     RegisterdDate,
-  } = props.CurrentUser ? props.CurrentUser : 1;
+  } = props.userDetail ? props.userDetail : 1;
 
   const handleVisibleModal = () => {
     setIsvisible(!isvisible);
   };
-  const handleLogout = () => {
-    // props.navigation.navigate("Welcome");
-    props.logout();
-    props.socket.disconnect();
-  };
+
   const ListUserImage = () => {
     return Pictures ? (
       Pictures.map((item, index) => (
@@ -73,7 +73,7 @@ const Myprofile = (props) => {
           <Image
             style={{ ...styles.tinyLogo }}
             source={{
-              uri: item.url,
+              uri: item.url ? item.url : null,
             }}
           />
         </View>
@@ -87,9 +87,25 @@ const Myprofile = (props) => {
     <View style={styles.Container}>
       <Modal style={{ flex: 1 }} visible={isvisible} animationType="slide">
         <View style={{ flex: 1 }}>
-          <EditProfile
-            loading={props.loading}
+          <Icon
+            style={{
+              width: 50,
+              height: 100,
+              position: "absolute",
+              flex: 1,
+              left: 3,
+              top: 3,
+              zIndex: 2,
+            }}
+            onPress={handleVisibleModal}
+            name="arrow-left"
+            size={24}
+            color="black"
+          />
+          <Chat
+            socket={props.socket}
             handleVisibleModal={handleVisibleModal}
+            sender={props.userDetail}
           />
         </View>
       </Modal>
@@ -100,31 +116,8 @@ const Myprofile = (props) => {
             autoplay={true}
             style={styles.wrapper}
             showsButtons={true}
+            activeDotColor={Colors.main}
           >
-            {/* <View style={styles.slider}>
-              <Image
-                style={{ ...styles.tinyLogo }}
-                source={require("../../assets/image2.jpg")}
-              />
-            </View>
-            <View style={styles.slider}>
-              <Image
-                style={{ ...styles.tinyLogo }}
-                source={{ url: `${Pictures[0].url}` }}
-              />
-            </View>
-            <View style={styles.slider}>
-              <Image
-                style={{ ...styles.tinyLogo }}
-                source={require("../../assets/image3.jpg")}
-              />
-            </View>
-            <View style={styles.slider}>
-              <Image
-                style={{ ...styles.tinyLogo }}
-                source={require("../../assets/logo192.png")}
-              />
-            </View> */}
             {ListUserImage()}
           </Swiper>
 
@@ -135,16 +128,10 @@ const Myprofile = (props) => {
               </Text>
 
               <Text style={styles.smallText}>
-                <Icon name="user" size={12} /> {Age} years
+                <Icon name="user" size={12} /> {Age ? `${Age} years` : null}
               </Text>
               <Text style={{ ...styles.smallText }}>
                 <Icon name="map-pin" size={12} /> {county}, {state}
-              </Text>
-              <Text
-                onPress={handleVisibleModal.bind(this)}
-                style={{ right: 0, position: "absolute" }}
-              >
-                edit profile <Icon name="edit" size={40} />
               </Text>
             </View>
 
@@ -262,16 +249,58 @@ const Myprofile = (props) => {
                 )}
               </View>
             </View>
-
-            <Button
-              title="logout"
-              onPress={() => {
-                handleLogout();
-              }}
-            />
           </View>
         </View>
       </ScrollView>
+      <View
+        style={{
+          height: 60,
+          flexDirection: "row",
+          backgroundColor: "grey",
+          width: "100%",
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            console.log("pressed");
+          }}
+          style={{ width: Dimensions.get("window").width / 2, height: 60 }}
+        >
+          <View
+            style={{
+              height: "100%",
+              backgroundColor: Colors.Puff,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <MaterialCommunityIcons name="heart" size={40} color="#FF4500" />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleVisibleModal.bind(this)}
+          style={{
+            width: Dimensions.get("window").width / 2,
+            height: 60,
+            backgroundColor: "red",
+          }}
+        >
+          <View
+            style={{
+              height: "100%",
+              backgroundColor: Colors.main,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <MaterialCommunityIcons
+              name="email-edit-outline"
+              size={40}
+              color={Colors.background}
+            />
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -327,9 +356,9 @@ const styles = StyleSheet.create({
 });
 
 const mapDispatchToProps = (dispatch) => {
-  return { logout: () => dispatch(logOutstart()) };
+  return { user: () => {} };
 };
 const mapStateToProps = (state) => {
-  return { loading: loading(state), CurrentUser: currentUserDetails(state) };
+  return { CurrentUser: currentUserDetails(state) };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Myprofile);
+export default connect(mapStateToProps, mapDispatchToProps)(Userprofile);

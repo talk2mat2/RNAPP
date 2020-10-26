@@ -1,9 +1,10 @@
 import { StatusBar } from "expo-status-bar";
 
 import React, { useState } from "react";
-import Myprofile from './components/myProFile/myProfile'
+import Myprofile from "./components/myProFile/myProfile";
+import Icon from "react-native-vector-icons/FontAwesome";
 
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 import {
   StyleSheet,
   Text,
@@ -20,14 +21,11 @@ import Main from "./components/loginsignup/Main";
 function Welcome(state) {
   const [isVisible, setIsVisible] = useState(false);
   const handlePress = (value) => {
-    value==="normal"&& setIsVisible(true);
-   
+    value === "normal" && setIsVisible(true);
   };
   const handlePress2 = () => {
     setIsVisible(!isVisible);
-   
-  }; 
-
+  };
 
   const Landing = (
     <ImageBackground
@@ -46,9 +44,24 @@ function Welcome(state) {
         <TouchableOpacity
           onPress={handlePress.bind(this, "google")}
           activeOpacity={0.5}
-          style={styles.btngoogle}
+          style={{
+            ...styles.btngoogle,
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
         >
-          <Text style={{ color: Colors.white, fontSize: 16 }}>
+          <Icon
+            style={{ position: "absolute", left: 50 }}
+            color="white"
+            name="google"
+            size={30}
+          />
+          <Text
+            style={{
+              color: Colors.white,
+              fontSize: 16,
+            }}
+          >
             LOGIN WITH GOOGLE
           </Text>
         </TouchableOpacity>
@@ -67,29 +80,24 @@ function Welcome(state) {
     </ImageBackground>
   );
 
-console.log(state.userInfo)
   return (
-   
-    <React.Fragment> 
+    <React.Fragment>
       {Landing}
       <Modal visible={isVisible} animationType="slide">
         <View>
           <TouchableOpacity onPress={handlePress2}>
-           <Text>close</Text>
-         
+            <Text>close</Text>
           </TouchableOpacity>
-       <Main/>
+          <Main loading={state.userInfo.loading} />
         </View>
       </Modal>
     </React.Fragment>
-     
   );
 }
 
-const mapStateToProps=(state)=>state
+const mapStateToProps = (state) => state;
 
-
-export default connect(mapStateToProps)(Welcome)
+export default connect(mapStateToProps)(Welcome);
 
 const styles = StyleSheet.create({
   logincontainer: {

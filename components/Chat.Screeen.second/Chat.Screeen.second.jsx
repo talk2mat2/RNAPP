@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useRef, useEffect } from "react";
 
 import {
-  Dimensions,
   Modal,
   Alert,
   Text,
@@ -21,9 +20,9 @@ import {
 } from "react-native";
 
 import { Colors } from "../constants/colors";
-import RemoteChatUserDetail from "../remoteChatUserDetail/remoteChatUserDetail";
+import RemoteChatUserDetail from "../remoteChatUserDetailsecond/remoteChatUserDetailsecond";
 const STATUSBAR_HEIGHT = Platform === "ios" ? 20 : StatusBar.currentHeight;
-
+// import { socket } from "../../socket";
 const HomeChatScreen = (props) => {
   return (
     <View style={styles.HomeChat}>
@@ -45,7 +44,7 @@ const RemoteChatScreen = (props) => {
 
 const Chat = (props) => {
   const [chatInputmesg, setChatInputmesg] = useState("");
-  const [profilePics, setProfilePics] = useState("");
+
   const [RemoteUserVisible, setRemoteUserVisible] = useState(false);
   const handlechatInputmesg = (text) => {
     setChatInputmesg(text);
@@ -53,43 +52,48 @@ const Chat = (props) => {
   const dispatch = useDispatch();
   const chatMsg = useSelector((state) => state.chatList);
   const currentUser = useSelector((state) => state.userInfo.user.userdata);
+  const { sender } = props;
 
+  // console.log([sender]["Pictures"][0]["url"]);
   // const userImaheUrl= Object.keys(chatMsg).includes(props.sender.id)?
   // alert(props.sender);
+  // console.log(currentUser._id);
+  useEffect(() => {});
 
-  const handleSendMsg = () => {
+  const handleSendMsg = async () => {
+    //save message copy to redux
     const data = {
-      msgFrom: props.sender.name,
+      msgFrom: sender.firstName,
       msgBody: chatInputmesg,
-      msgFromId: props.sender.id,
+      msgFromId: sender._id,
     };
     dispatch(sendMessage(data));
 
+    //send message copy to backend for dispatch to receicer remote
     const data2 = {
       msgFromId: currentUser._id,
-      msgTo: props.sender.id,
+      msgTo: sender._id,
       msgFrom: currentUser.firstName,
       msgBody: chatInputmesg,
     };
-    props.socket.emit("newMsg", data2);
+    await props.socket.emit("newMsg", data2);
     setChatInputmesg("");
   };
-  useEffect(() => {
-    const fetchUserProfilePics = () => {
-      const imageurl =
-        chatMsg[props.sender.id]["remoteUserProfile"] &&
-        chatMsg[props.sender.id]["remoteUserProfile"]["Pictures"].length > 0
-          ? chatMsg[props.sender.id]["remoteUserProfile"]["Pictures"][0]["url"]
-          : null;
+  // useEffect(() => {
+  //   const fetchUserProfilePics = () => {
+  //     const imageurl =
+  //       chatMsg[props.sender.id]["remoteUserProfile"] &&
+  //       chatMsg[props.sender.id]["remoteUserProfile"]["Pictures"] &&
+  //       chatMsg[props.sender.id]["remoteUserProfile"]["Pictures"][0]["url"];
 
-      setProfilePics(imageurl);
-    };
-    dispatch(getUserById(props.sender.id));
-    fetchUserProfilePics();
-  }, []);
+  //     setProfilePics(imageurl);
+  //   };
+  //   dispatch(getUserById(props.sender.id));
+  //   fetchUserProfilePics();
+  // }, []);
   const listAllCharts = () => {
-    if (Object.keys(chatMsg).includes(props.sender.id)) {
-      const newArr = chatMsg[props.sender.id]["chatss"];
+    if (Object.keys(chatMsg).includes(sender._id)) {
+      const newArr = chatMsg[sender._id]["chatss"];
       return newArr.map((values, index) => {
         return (
           <View key={index}>
@@ -134,7 +138,7 @@ const Chat = (props) => {
         </TouchableOpacity>
         <RemoteChatUserDetail
           setRemoteUserVisible={setRemoteUserVisible}
-          id={props.sender.id}
+          details={sender}
         />
       </Modal>
       <View style={styles.Container}>
@@ -164,9 +168,14 @@ const Chat = (props) => {
                   width: 40,
                   borderRadius: 20,
                 }}
-                source={{ uri: profilePics ? profilePics : null }}
+                source={{
+                  uri:
+                    sender["Pictures"].length > 0
+                      ? sender["Pictures"][0]["url"]
+                      : null,
+                }}
               />
-              <Text>{props.sender.name}</Text>
+              <Text>{sender.firstName}</Text>
             </View>
           </TouchableOpacity>
           <Text style={styles.headText1}>Chat </Text>
@@ -274,14 +283,8 @@ const styles = StyleSheet.create({
     width: "100%",
     marginVertical: 6,
   },
-  HomeChatView: {
-    maxWidth: Dimensions.get("window").width / 1.41,
-    marginRight: 5,
-  },
-  RemoteChatView: {
-    maxWidth: Dimensions.get("window").width / 1.41,
-    marginLeft: 5,
-  },
+  HomeChatView: { minWidth: "10%", marginRight: 5 },
+  RemoteChatView: { minWidth: "10%", marginLeft: 5 },
   HomeChatText: {
     color: Colors.white,
     backgroundColor: Colors.googleblue,

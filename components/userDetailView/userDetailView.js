@@ -3,6 +3,7 @@ import { Text, Image, StyleSheet, View, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { Colors } from "../constants/colors";
 import SafeAreaView from "react-native-safe-area-view";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const MyprofileView = styled.View`
   flex-direction: column;
