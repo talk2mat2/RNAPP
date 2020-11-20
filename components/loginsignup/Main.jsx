@@ -7,6 +7,7 @@ import {
   Modal,
   Image,
   TextInput,
+  ScrollView,
   TouchableOpacity,
 } from "react-native";
 
@@ -56,6 +57,7 @@ const Main = () => {
   return (
     <View style={styles.containers}>
       <Image
+      resizeMode="contain"
         style={styles.tinyLogo}
         source={require("../../assets/logo.png")}
       />
@@ -78,11 +80,13 @@ const Main = () => {
         </TouchableOpacity>
       </View>
 
-      <CurrentView.screen
+     <ScrollView>
+     <CurrentView.screen
         setLoading={setLoading}
         handlePress={handlePress}
         loading={loading}
       />
+     </ScrollView>
     </View>
   );
 };

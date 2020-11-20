@@ -13,3 +13,5 @@ export const ClearErrorMessage = "ClearErrorMessage";
 // export const makeNewSearch = "makeNewSearch";
 export const NewMsgReceived = "NewMsgReceived";
 export const NewMsgsent = "NewMsgsent";
+export const upDateSettings = "upDateSettings";
+export const setMountedPage = "setMountedPage";

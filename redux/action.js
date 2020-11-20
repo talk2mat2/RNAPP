@@ -88,6 +88,12 @@ const DeleteMyImagestart = (id) => {
 //     });
 //   };
 // };
+export const resetLoading=()=>{
+return {
+  type :"resetLoading",
+}
+}
+
 
 export const DeleteMyImage = (id, url) => {
   const spliturl = url.split("/");
@@ -96,9 +102,9 @@ export const DeleteMyImage = (id, url) => {
     await dispatch(DeleteMyImagestart(id));
     const DeletedPicture = Store.getState().userInfo.user.userdata["Pictures"];
     dispatch(upDateUserStartAxios({ Pictures: DeletedPicture }));
-    const url = `http://server-me2love.herokuapp.com/api/v1/image/delete/${
+    const url = `https://server-me2love.herokuapp.com/api/v1/image/delete/${
       spliturl[spliturl.length - 1]
-    }`;
+    }?photoid=id`;
     const Token = getState().userInfo.user.token;
 
     const headers = {
@@ -157,6 +163,8 @@ export const startGetUserLocationAsync = (position) => {
     axios(options)
       .then((res) => {
         const data = {
+          longitude: position.coords.longitude,
+          latitude: position.coords.latitude,
           county: res.data.address.county,
           country: res.data.address.country,
           state: res.data.address.state,
@@ -194,17 +202,23 @@ export const loginUserStartAxios = (userdata) => {
       })
       .catch((error) => {
         if (error.response) {
-          console.log(error.response.status);
-          console.log(error.response.data);
+          // console.log(error.response.status);
+          // console.log(error.response.data);
           dispatch(loginUserFailure(error.response.data));
+        } else {
+          dispatch(loginUserFailure({ message: "network error" }));
         }
       });
   };
 };
 
+
+
 export const uploadImages = (image) => {
-  // console.log(image);
   return async (dispatch, getState) => {
+    if (!image) {
+      return;
+    }
     await dispatch(upDateUsersstart());
     var formData = new FormData();
 
@@ -270,18 +284,43 @@ export const getUserById = (id) => {
       .catch((err) => console.log(err));
   };
 };
+export const clearUnredMsg=(value)=>{
 
+  return (dispatch,getState)=>{
+    const chatList = getState().chatList;
+   
+   
+  //  console.log(chatList[value])
+   
+//check if the unread messae is true, then turn it to false
+if(chatList[value.id]&&chatList[value.id].unreadMsg==true){
+  chatList[value.id].unreadMsg=false
+  dispatch({ type: actiontypes.NewMsgReceived, payload: chatList });
+}
+     
+  }
+
+}
+export const setMountedPageId=(id)=>{
+
+  return{
+    type:actiontypes.setMountedPage,
+    payload:id
+  }
+}
 export const saveNewMessage = (data) => {
   return (dispatch, getState) => {
     // msgFromId is remote senders id
-    const { msgFrom, msgBody, msgFromId } = data;
+    const { msgFrom, msgBody, msgFromId,unreadMsg } = data;
     // console.log(data);
-    // console.log(msgFrom);
+    // console.log(msgFromId);
     // const newArray=[]
     const chatList = getState().chatList;
     if (Object.keys(chatList).includes(msgFromId)) {
       const msgData = { origin: "remote", msg: msgBody };
       chatList[msgFromId].chatss.push(msgData);
+      chatList[msgFromId].unreadMsg=unreadMsg;
+
       chatList[msgFromId].remoteUserProfile._id && getUserById(msgFromId);
       dispatch({ type: actiontypes.NewMsgReceived, payload: chatList });
     } else {
@@ -290,8 +329,10 @@ export const saveNewMessage = (data) => {
         type: actiontypes.NewMsgReceived,
 
         payload: {
+          ...chatList,
           [msgFromId]: {
             name: msgFrom,
+            unreadMsg:unreadMsg,
             chatss: [msgData],
             remoteUserProfile: {},
           },
@@ -326,6 +367,7 @@ export const sendMessage = (data) => {
         //this section is for msg from local phne owner/user
         //to enable chatlist to display message details
         payload: {
+          ...chatList,
           [msgFromId]: {
             name: msgFrom,
             chatss: [msgData],
@@ -335,5 +377,12 @@ export const sendMessage = (data) => {
       });
       dispatch(getUserById(msgFromId));
     }
+  };
+};
+
+export const UpdateSettings = (value) => {
+  return {
+    type: actiontypes.upDateSettings,
+    payload: value,
   };
 };

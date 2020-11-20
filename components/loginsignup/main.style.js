@@ -21,8 +21,8 @@ export const styles = StyleSheet.create({
   },
   tinyLogo: {
     width: "65%",
-    height: 60,
-    margin: 9,
+    height: 40,
+    margin: 5,
   },
   containers: {
     flexDirection: "column",

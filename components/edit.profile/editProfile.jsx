@@ -205,6 +205,7 @@ const EditProfile = (props) => {
               <Text style={styles.label}>First Name :</Text>
               <NiceTextInput
                 name="firstName"
+                maxLength={15}
                 handleChange={handleChange}
                 value={userstate.firstName}
                 style={{ width: "100%", ...styles.NiceText }}
@@ -213,6 +214,7 @@ const EditProfile = (props) => {
             <View style={styles.inputwrap}>
               <Text style={styles.label}>Last Name :</Text>
               <NiceTextInput
+                maxLength={15}
                 name="lastName"
                 value={userstate.lastName}
                 handleChange={handleChange}

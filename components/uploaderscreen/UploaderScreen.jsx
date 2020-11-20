@@ -20,10 +20,10 @@ import { uploadImages } from "../../redux/action";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 
-import Icon from "react-native-vector-icons/FontAwesome";
-import styled from "styled-components/native";
 import { Colors } from "../constants/colors";
 import UserDetailView from "../userDetailView/userDetailView";
+import Icon from "react-native-vector-icons/Fontisto";
+import Icon2 from "react-native-vector-icons/AntDesign";
 
 const STATUSBAR_HEIGHT = Platform === "ios" ? 20 : StatusBar.currentHeight;
 
@@ -42,7 +42,7 @@ const UploaderScreen = (props) => {
           status,
         } = await ImagePicker.requestCameraRollPermissionsAsync();
         if (status !== "granted") {
-          alert("Sorry, we need camera roll permissions to make this work!");
+          alert("permission needed to upload ");
         }
       }
     })();
@@ -68,29 +68,42 @@ const UploaderScreen = (props) => {
   };
 
   return (
-    // <View style={styles.Container}>
-    //   <StatusBar />
-    //   <View style={styles.Header}>
-    //     <Text style={styles.headText1}>Upload Images </Text>
-    //   </View>
-    //   <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-    //     <Button title="Pick an image from camera roll" onPress={pickImage} />
-    //     {image && (
-    //       <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-    //     )}
-    //   </View>
-    //   <ScrollView style={styles.ScrollViews}></ScrollView>
-    // </View>
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
       {image && (
-        <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+        <Image source={{ uri: image }} style={{ width: 400, height: 400 }} />
+      )}
+
+      {image && (
+        <TouchableOpacity
+          onPress={handleUpload}
+          style={{
+            position: "absolute",
+            margin: 0.1,
+            width: 50,
+            height: 50,
+            right: 1,
+            top: 10,
+            zIndex: 2,
+            elevation: 2,
+            alignItems: "center",
+          }}
+        >
+          <Icon name="check" size={22} />
+        </TouchableOpacity>
       )}
       <TouchableOpacity
-        onPress={handleUpload}
-        style={{ margin: 30, width: 300, height: 150 }}
+        onPress={pickImage}
+        style={{
+          margin: 0.1,
+          width: 50,
+          height: 50,
+
+          zIndex: 2,
+          elevation: 2,
+          alignItems: "center",
+        }}
       >
-        <Button title="UPLOAD" />
+        <Icon2 name="addfile" size={35} color={Colors.main} />
       </TouchableOpacity>
     </View>
   );

@@ -6,6 +6,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Modal,
+  Dimensions,
   View,
   StatusBar,
   Text,
@@ -75,11 +76,12 @@ const RemoteChatUserDetail = (props) => {
   };
 
   const ListUserImage = () => {
+    const win= Dimensions.get('window')
     return Pictures ? (
       Pictures.map((item, index) => (
         <View key={index} style={styles.slider}>
           <Image
-            style={{ ...styles.tinyLogo }}
+             style={{ ...styles.tinyLogo,width:win.width,height:win.width }}
             source={{
               uri: item.url ? item.url : null,
             }}
@@ -100,6 +102,8 @@ const RemoteChatUserDetail = (props) => {
             autoplay={true}
             style={styles.wrapper}
             showsButtons={true}
+            activeDotColor={Colors.main}
+            dotColor="grey"
           >
             {/* <View style={styles.slider}>
               <Image

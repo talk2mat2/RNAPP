@@ -1,7 +1,7 @@
 import KeyboardSpacer from "react-native-keyboard-spacer";
 import SafeAreaView from "react-native-safe-area-view";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { sendMessage, getUserById } from "../../redux/action";
+import { sendMessage, getUserById,setMountedPageId } from "../../redux/action";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useRef, useEffect } from "react";
 
@@ -74,6 +74,16 @@ const Chat = (props) => {
     props.socket.emit("newMsg", data2);
     setChatInputmesg("");
   };
+  useEffect(()=>{
+  
+    // console.log(props.sender.id)
+   dispatch(setMountedPageId(props.sender.id))
+//modify reducer, adding unread mesage count, 
+//if the user id is not mounted, unreadcountr uncreases
+  // return ()=>{
+  //   dispatch(setMountedPageId(null))
+  // } 
+  },[])
   useEffect(() => {
     const fetchUserProfilePics = () => {
       const imageurl =
@@ -88,9 +98,12 @@ const Chat = (props) => {
     fetchUserProfilePics();
   }, []);
   const listAllCharts = () => {
+    
     if (Object.keys(chatMsg).includes(props.sender.id)) {
       const newArr = chatMsg[props.sender.id]["chatss"];
-      return newArr.map((values, index) => {
+      return newArr.map((values,index) => {
+        
+        
         return (
           <View key={index}>
             {values.origin === "remote" && (
@@ -107,7 +120,7 @@ const Chat = (props) => {
   const scrollViewRef = useRef();
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Modal animationType="slide" visible={RemoteUserVisible}>
+      <Modal onRequestClose={()=>setRemoteUserVisible(false)} animationType="slide" visible={RemoteUserVisible}>
         <TouchableOpacity
           style={{
             position: "absolute",
@@ -166,10 +179,9 @@ const Chat = (props) => {
                 }}
                 source={{ uri: profilePics ? profilePics : null }}
               />
-              <Text>{props.sender.name}</Text>
+              <Text style={styles.headText}>{props.sender.name}</Text>
             </View>
           </TouchableOpacity>
-          <Text style={styles.headText1}>Chat </Text>
         </View>
 
         <ScrollView
@@ -238,6 +250,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     fontSize: 15,
     borderWidth: 1,
+    fontFamily: "sans-serif",
   },
   send: {
     flex: 1,
@@ -310,8 +323,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: "#f4f4f4",
   },
-  headText: { fontSize: 18 },
-  headText1: { fontSize: 20 },
+  headText: { fontSize: 16, fontFamily: "sans-serif" },
+  headText1: { fontSize: 20, fontFamily: "sans-serif" },
   bottomText: { fontSize: 16, color: Colors.grey },
   Header: {
     flexDirection: "row",
@@ -322,6 +335,7 @@ const styles = StyleSheet.create({
     borderColor: "silver",
     borderWidth: 2,
     fontSize: 20,
+    fontFamily: "sans-serif",
   },
   ScrollViews: {
     paddingHorizontal: 3,

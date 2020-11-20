@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState ,useRef,useEffect} from "react";
+import { useSelector,useDispatch } from "react-redux";
+import {clearUnredMsg} from '../../redux/action'
+
 
 import {
   TouchableOpacity,
@@ -19,36 +21,76 @@ import styled from "styled-components/native";
 import { Colors } from "../constants/colors";
 import UserDetailView from "../userDetailView/userDetailView";
 import Chat from "../Chat/Chat";
+import avatar from "../../assets/avatar.png";
+const avatarUri = Image.resolveAssetSource(avatar).uri;
 const STATUSBAR_HEIGHT = Platform === "ios" ? 20 : StatusBar.currentHeight;
 
 const DetailLisiView = (props) => {
   // const { msgFrom, msgBody } = props;
 
   // console.log(props.imgurl[0]["url"]);
+
+// const msgcount=useRef(0)
+// const{chatmsg}=props
+// useEffect(()=>{
+//  msgcount.current=chatmsg
+//  console.log(chatmsg===msgcount.current)
+//  console.log(msgcount.current,chatmsg)
+// },[])
+
   return (
-    StatusBar,
     (
       <View style={{ ...styles.Detaillist, width: "100%" }}>
-        <Image
-          style={styles.tinythumb}
-          source={{
-            uri:
-              typeof props.imgurl !== "undefined" && props.imgurl.length > 0
-                ? props.imgurl[0]["url"]
-                : null,
-          }}
-        ></Image>
+        <View>
+          <Image
+            style={{ ...styles.tinythumb }}
+            source={{
+              uri:
+                typeof props.imgurl !== "undefined" && props.imgurl.length > 0
+                  ? props.imgurl[0]["url"]
+                  : avatarUri,
+            }}
+          />
+          <Icon
+            style={{
+              position: "absolute",
+              bottom: 2,
+              right: 10,
+              zIndex: 2,
+              elevation: 2,
+              color: props.isOnline ? "#3CB371" : null,
+            }}
+            name="circle"
+            size={9}
+          />
+        </View>
         <TouchableOpacity
-          style={{ width: "80%" }}
+          style={{ width: "80%" ,flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}
           onPress={() => {
             props.onPress();
           }}
         >
-          <Text style={styles.smallText2}> {props.msgFrom}</Text>
+         <View>
+         <Text style={styles.smallText2}> {props.msgFrom}</Text>
           <Text numberOfLines={1} style={styles.bottomText}>
             {" "}
             {props.msgPreview}
           </Text>
+         </View>
+          {props.unread&&(
+            <Icon
+            style={{
+            
+              bottom: 2,
+              right: 10,
+              zIndex: 2,
+              elevation: 2,
+              color: Colors.googleblue
+            }}
+            name="circle"
+            size={16}
+          />
+          )}
         </TouchableOpacity>
       </View>
     )
@@ -56,26 +98,45 @@ const DetailLisiView = (props) => {
 };
 
 const Chatlist = (props) => {
+  const dispatch=useDispatch()
   const [isVisible, setIsVisible] = useState(false);
   const [sender, setSender] = useState("");
   const chatMsg = useSelector((state) => state.chatList);
   const handlePress = (value) => {
-    setSender(value);
+    value&&setSender(value);
     setIsVisible(!isVisible);
+  value&&dispatch(clearUnredMsg(value))
+   
   };
 
   const listALLmessage = () => {
     const newArr = Object.keys(chatMsg);
-    // const body=
-    return newArr.map((id, i) => (
-      <DetailLisiView
-        key={i}
-        imgurl={chatMsg[id]["remoteUserProfile"]["Pictures"]}
-        msgFrom={chatMsg[id]["name"]}
-        msgPreview={chatMsg[id]["chatss"][chatMsg[id]["chatss"].length - 1].msg}
-        onPress={handlePress.bind(this, { id: id, name: chatMsg[id]["name"] })}
-      />
-    ));
+
+
+    
+    return   newArr
+      .map((id, i) => (
+        
+         <DetailLisiView
+          key={i}
+          chatmsg={chatMsg[id]["chatss"].length}
+          unread={chatMsg[id].unreadMsg}
+          isOnline={chatMsg[id]["remoteUserProfile"]["isOnline"]}
+          imgurl={chatMsg[id]["remoteUserProfile"]["Pictures"]}
+          msgFrom={chatMsg[id]["name"]}
+          msgPreview={
+            chatMsg[id]["chatss"][chatMsg[id]["chatss"].length - 1].msg
+          }
+          onPress={handlePress.bind(this, {
+            id: id,
+            name: chatMsg[id]["name"],
+          })}
+        />
+      ))
+      .reverse()
+
+    
+    
   };
 
   return (
@@ -84,7 +145,7 @@ const Chatlist = (props) => {
       <View style={styles.Header}>
         <Text style={styles.headText1}>Chat List </Text>
       </View>
-      <Modal visible={isVisible} animationType="slide">
+      <Modal onRequestClose={handlePress} visible={isVisible} animationType="slide">
         <TouchableOpacity
           style={{
             position: "absolute",
@@ -137,8 +198,9 @@ const styles = StyleSheet.create({
     fontFamily: "sans-serif",
   },
   headText: { fontSize: 18, color: Colors.text },
-  headText1: { fontSize: 20 },
-  bottomText: { fontSize: 16, color: Colors.grey },
+  headText1: { fontSize: 20, fontFamily: "sans-serif" },
+
+  bottomText: { fontSize: 16, color: Colors.grey, fontFamily: "sans-serif" },
   Header: {
     alignItems: "center",
     justifyContent: "center",
@@ -158,7 +220,7 @@ const styles = StyleSheet.create({
   tinythumb: {
     width: 60,
     height: 60,
-    margin: 3,
+    margin: 2,
     marginRight: 14,
     marginLeft: 8,
     borderRadius: 13,

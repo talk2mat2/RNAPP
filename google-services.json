@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "155025105684",
+    "firebase_url": "https://me2lovechat.firebaseio.com",
+    "project_id": "me2lovechat",
+    "storage_bucket": "me2lovechat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155025105684:android:6e2536fbd7ba56bf4cd801",
+        "android_client_info": {
+          "package_name": "com.mat2.me2lovechat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "155025105684-30k4jbdqssrnig0ajbaet367qnq22qll.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAcXue-Xc_o_CTsrGJN7qjC7jkwHFCxZw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "155025105684-30k4jbdqssrnig0ajbaet367qnq22qll.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

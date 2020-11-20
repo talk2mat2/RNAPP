@@ -16,14 +16,25 @@ const SweetButtons = (props) => {
   return (
     <TouchableOpacity
       onPress={props.handlePress}
-      style={{ width: "100%", alignItems: "center" }}
+      style={{
+        width: "99%",
+
+        alignItems: "center",
+        elevation: 4,
+        ...props.style,
+      }}
     >
       <Views
-        style={{ backgroundColor: props.color, flexDirection: "row" }}
+        style={{
+          width: props.width || "90%",
+          height: props.height || 50,
+          backgroundColor: props.color,
+          flexDirection: "row",
+        }}
         {...props}
       >
         <Text style={{ color: Colors.background }}>{props.children}</Text>
-        <Text style={{ color: Colors.background, margin: 7 }}>
+        <Text style={{ fontSize: 17, color: Colors.background, margin: 7 }}>
           {props.value}
         </Text>
       </Views>

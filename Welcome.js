@@ -3,8 +3,8 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import Myprofile from "./components/myProFile/myProfile";
 import Icon from "react-native-vector-icons/FontAwesome";
-
-import { connect } from "react-redux";
+import {resetLoading} from './redux/action'
+import { connect ,useDispatch} from "react-redux";
 import {
   StyleSheet,
   Text,
@@ -19,19 +19,21 @@ import Styled from "styled-components/native";
 import Main from "./components/loginsignup/Main";
 
 function Welcome(state) {
+  const dispatch=useDispatch()
   const [isVisible, setIsVisible] = useState(false);
   const handlePress = (value) => {
     value === "normal" && setIsVisible(true);
   };
   const handlePress2 = () => {
     setIsVisible(!isVisible);
+    dispatch(resetLoading())
   };
 
   const Landing = (
     <ImageBackground
       resizeMode="cover"
       style={styles.background}
-      source={require("./assets/landing2.jpg")}
+      source={require("./assets/landing3.jpg")}
     >
       <View style={styles.header}>
         <Text style={{ fontSize: 50, color: "#fff" }}>me2love</Text>
@@ -85,8 +87,8 @@ function Welcome(state) {
       {Landing}
       <Modal visible={isVisible} animationType="slide">
         <View>
-          <TouchableOpacity onPress={handlePress2}>
-            <Text>close</Text>
+          <TouchableOpacity onPress={handlePress2} >
+           <Icon name="close" size={24}/>
           </TouchableOpacity>
           <Main loading={state.userInfo.loading} />
         </View>

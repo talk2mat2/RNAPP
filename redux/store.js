@@ -1,4 +1,4 @@
-import { userReducer, chatListReducer } from "./reducer";
+import { userReducer, chatListReducer, Settings,mountedReducer } from "./reducer";
 import { createStore, combineReducers, applyMiddleware, create } from "redux";
 // const rootReducer= combineReducers({userInfo:userReducer})
 import ReduxThunk from "redux-thunk";
@@ -9,12 +9,14 @@ import AsyncStorage from "@react-native-community/async-storage";
 const authPersistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["userInfo", "chatList"],
+  whitelist: ["userInfo", "chatList", "Settings","mountedPage"],
 };
 
 const rootReducer = combineReducers({
   chatList: chatListReducer,
+  Settings: Settings,
   userInfo: userReducer,
+  mountedPage:mountedReducer
 
   // other: otherReducer,
 });

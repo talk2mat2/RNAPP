@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector, useDispatch } from "react-redux";
 import {
+  Dimensions,
   Modal,
   View,
   StatusBar,
@@ -22,7 +23,8 @@ const STATUSBAR_HEIGHT = Platform === "ios" ? 20 : StatusBar.currentHeight;
 
 import { TouchableOpacity } from "react-native-gesture-handler";
 // import Chat from "../Chat/Chat";
-
+import avatar from "../../assets/avatar.png";
+const avatarUri = Image.resolveAssetSource(avatar).uri;
 const RemoteChatUserDetail = (props) => {
   const [remoteUser, setRemoteUser] = useState({});
   const [isvisible, setIsvisible] = useState(false);
@@ -74,13 +76,14 @@ const RemoteChatUserDetail = (props) => {
   };
 
   const ListUserImage = () => {
+    const win= Dimensions.get('window')
     return Pictures ? (
       Pictures.map((item, index) => (
         <View key={index} style={styles.slider}>
           <Image
-            style={{ ...styles.tinyLogo }}
+                        style={{ ...styles.tinyLogo,width:win.width,height:win.width }}
             source={{
-              uri: item.url ? item.url : null,
+              uri: item.url ? item.url : avatarUri,
             }}
           />
         </View>
@@ -99,31 +102,9 @@ const RemoteChatUserDetail = (props) => {
             autoplay={true}
             style={styles.wrapper}
             showsButtons={true}
+             dotColor="grey"
+             activeDotColor={Colors.main}
           >
-            {/* <View style={styles.slider}>
-              <Image
-                style={{ ...styles.tinyLogo }}
-                source={require("../../assets/image2.jpg")}
-              />
-            </View>
-            <View style={styles.slider}>
-              <Image
-                style={{ ...styles.tinyLogo }}
-                source={{ url: `${Pictures[0].url}` }}
-              />
-            </View>
-            <View style={styles.slider}>
-              <Image
-                style={{ ...styles.tinyLogo }}
-                source={require("../../assets/image3.jpg")}
-              />
-            </View>
-            <View style={styles.slider}>
-              <Image
-                style={{ ...styles.tinyLogo }}
-                source={require("../../assets/logo192.png")}
-              />
-            </View> */}
             {ListUserImage()}
           </Swiper>
 
@@ -133,7 +114,7 @@ const RemoteChatUserDetail = (props) => {
                 {firstName} {lastName}
               </Text>
               <Text style={styles.smallText}>
-                <Icon name="user" size={12} /> {Age} years
+                <Icon name="user" size={12} /> {Age ? `${Age} years` : null}
               </Text>
               <Text style={{ ...styles.smallText }}>
                 <Icon name="map-pin" size={12} /> {county}, {state}

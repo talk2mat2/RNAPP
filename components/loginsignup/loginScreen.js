@@ -41,6 +41,9 @@ const LoginScreen = (props) => {
     // }, 6000);
   }, [errorMessages]);
   const handleLogin = () => {
+    if(!state.email||!state.password){
+      return Alert.alert('you must fill all details')
+    }
     const userdata = { email: state.email, password: state.password };
 
     props.loginUser(userdata);

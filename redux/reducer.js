@@ -19,6 +19,8 @@ export const userReducer = (state = initial_state, action) => {
     };
   } else if (action.type === actiontypes.upDateUser_failure) {
     return { ...state, loading: false, error: action.payload };
+  }  else if (action.type === "resetLoading") {
+    return { ...state, loading: false,error:{}};
   } else if (action.type === actiontypes.logOut_Start) {
     return { ...state, loading: false, error: {}, user: action.payload };
   } else if (action.type === actiontypes.getUserLocation_success) {
@@ -49,10 +51,43 @@ export const userReducer = (state = initial_state, action) => {
 const message_initstate = {};
 export const chatListReducer = (state = message_initstate, action) => {
   if (action.type === actiontypes.NewMsgReceived) {
-    return { ...state, ...action.payload };
+    return { ...action.payload };
   } else if (action.type === actiontypes.NewMsgsent) {
-    return { ...state, ...action.payload };
+    return { ...action.payload };
   } else {
     return state;
   }
 };
+
+const setting_initstate = {
+  Gender: "both",
+  sound: true,
+  alert: true,
+};
+export const Settings = (state = setting_initstate, action) => {
+  switch (action.type) {
+    case actiontypes.upDateSettings:
+      return {
+        ...state,
+        alert: action.payload.alert,
+        Gender: action.payload.Gender,
+        sound: action.payload.sound,
+      };
+    default:
+      return state;
+  }
+};
+
+const mounted_initstate={
+  mountedPageId:null
+}
+export const mountedReducer=(state=mounted_initstate,action)=>{
+switch(action.type){
+  case actiontypes.setMountedPage:
+    return {...state,mountedPageId:action.payload}
+    default:
+  return state
+
+}
+
+}

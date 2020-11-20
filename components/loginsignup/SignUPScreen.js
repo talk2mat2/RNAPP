@@ -72,13 +72,14 @@ const SignUPScreen = (props) => {
   const handleSignUp = () => {};
 
   return (
-    <View style={{ width: "100%", alignItems: "center", marginTop: 20 }}>
+    <View style={{ width: "100%", alignItems: "center", marginTop: 20,height:800}}>
       {state.errormessage ? (
         <Text style={{ color: "red", marginHorizontal: 20 }}>
           {state.errormessage}
         </Text>
       ) : null}
       <NiceTextInput
+        maxLength={35}
         autoCapitalize="none"
         handleChange={handleChange}
         value={state.email}
@@ -86,12 +87,14 @@ const SignUPScreen = (props) => {
         placeholder={`Email`}
       />
       <NiceTextInput
+        maxLength={15}
         handleChange={handleChange}
         value={state.firstName}
         name="firstName"
         placeholder={`first name`}
       />
       <NiceTextInput
+        maxLength={15}
         handleChange={handleChange}
         value={state.lastName}
         name="lastName"
@@ -99,6 +102,7 @@ const SignUPScreen = (props) => {
       />
 
       <NiceTextInput
+        maxLength={20}
         autoCapitalize="none"
         secureTextEntry={true}
         handleChange={handleChange}
@@ -107,6 +111,7 @@ const SignUPScreen = (props) => {
         placeholder={`password`}
       />
       <NiceTextInput
+        maxLength={20}
         autoCapitalize="none"
         secureTextEntry={true}
         handleChange={handleChange}
@@ -134,7 +139,7 @@ const SignUPScreen = (props) => {
           setState({ ...state, Gender: itemValue })
         }
       >
-        <Picker.Item label="" value={""} />
+        <Picker.Item label="---Sex---" value={""} />
         <Picker.Item label="male" value={"male"} />
         <Picker.Item label="female" value={"female"} />
       </Picker>
@@ -162,7 +167,7 @@ const SignUPScreen = (props) => {
             handleRegister();
           }}
           color={Colors.orange}
-          value="REGISTER "
+          value="REGISTER AND LOGIN "
         />
 
         <View style={{ ...styles.center, marginTop: 20 }}>

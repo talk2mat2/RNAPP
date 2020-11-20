@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Swiper from "react-native-swiper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -9,10 +9,12 @@ import {
   StatusBar,
   Text,
   Image,
+ 
   StyleSheet,
   Button,
   ScrollView,
   Platform,
+  Alert,
   TouchableOpacity,
 } from "react-native";
 import WithLoader from "../Loader/LoaderHoc";
@@ -28,6 +30,7 @@ import Chat from "../Chat.Screeen.second/Chat.Screeen.second";
 
 const Userprofile = (props) => {
   const [sender, setSender] = useState("");
+  const [State, setState] = useState({});
   const [isvisible, setIsvisible] = useState(false);
   const {
     Animals,
@@ -60,18 +63,25 @@ const Userprofile = (props) => {
     _id,
     Age,
     RegisterdDate,
-  } = props.userDetail ? props.userDetail : 1;
-
+  } = State ? State : 1;
+  // props.userDetail ? props.userDetail : 1;
+  const { userDetail } = props;
+  useEffect(() => {
+    setState(userDetail);
+  }, [userDetail]);
   const handleVisibleModal = () => {
     setIsvisible(!isvisible);
   };
+ 
+
 
   const ListUserImage = () => {
+    const win= Dimensions.get('window')
     return Pictures ? (
       Pictures.map((item, index) => (
         <View key={index} style={styles.slider}>
-          <Image
-            style={{ ...styles.tinyLogo }}
+          <Image resizeMode="contain"
+            style={{ ...styles.tinyLogo,width:win.width,height:win.width }}
             source={{
               uri: item.url ? item.url : null,
             }}
@@ -82,10 +92,10 @@ const Userprofile = (props) => {
       <View></View>
     );
   };
-
+  
   return (
     <View style={styles.Container}>
-      <Modal style={{ flex: 1 }} visible={isvisible} animationType="slide">
+      <Modal onRequestClose={handleVisibleModal} style={{ flex: 1 }} visible={isvisible} animationType="slide">
         <View style={{ flex: 1 }}>
           <Icon
             style={{
@@ -117,6 +127,7 @@ const Userprofile = (props) => {
             style={styles.wrapper}
             showsButtons={true}
             activeDotColor={Colors.main}
+            dotColor="grey"
           >
             {ListUserImage()}
           </Swiper>
@@ -307,9 +318,9 @@ const Userprofile = (props) => {
 
 const styles = StyleSheet.create({
   tinyLogo: {
-    width: 400,
+    width: '100%',
     height: 400,
-    margin: 9,
+    marginBottom: 9,
     borderRadius: 2,
   },
   smallText: {
@@ -350,7 +361,7 @@ const styles = StyleSheet.create({
     height: 450,
   },
   slider: {
-    height: 400,
+    height: 500,
     flex: 2,
   },
 });

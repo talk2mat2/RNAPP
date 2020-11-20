@@ -1,7 +1,7 @@
 import KeyboardSpacer from "react-native-keyboard-spacer";
 import SafeAreaView from "react-native-safe-area-view";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { sendMessage, getUserById } from "../../redux/action";
+import { sendMessage, getUserById ,setMountedPageId} from "../../redux/action";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useRef, useEffect } from "react";
 
@@ -17,6 +17,7 @@ import {
   StatusBar,
   Platform,
   ScrollView,
+  Dimensions,
 } from "react-native";
 
 import { Colors } from "../constants/colors";
@@ -58,7 +59,17 @@ const Chat = (props) => {
   // const userImaheUrl= Object.keys(chatMsg).includes(props.sender.id)?
   // alert(props.sender);
   // console.log(currentUser._id);
-  useEffect(() => {});
+//   useEffect(()=>{
+//    ()=>{
+//     console.log(5)
+//     dispatch(setMountedPageId(2))
+//    }
+//  //modify reducer, adding unread mesage count, 
+//  //if the user id is not mounted, unreadcountr uncreases
+//  return ()=>{
+//   dispatch(setMountedPageId(null))
+// } 
+//    },[])
 
   const handleSendMsg = async () => {
     //save message copy to redux
@@ -111,7 +122,7 @@ const Chat = (props) => {
   const scrollViewRef = useRef();
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Modal animationType="slide" visible={RemoteUserVisible}>
+      <Modal onRequestClose={()=>setRemoteUserVisible(false)} animationType="slide" visible={RemoteUserVisible}>
         <TouchableOpacity
           style={{
             position: "absolute",
@@ -175,10 +186,9 @@ const Chat = (props) => {
                       : null,
                 }}
               />
-              <Text>{sender.firstName}</Text>
+              <Text style={styles.headText}>{sender.firstName}</Text>
             </View>
           </TouchableOpacity>
-          <Text style={styles.headText1}>Chat </Text>
         </View>
 
         <ScrollView
@@ -283,8 +293,14 @@ const styles = StyleSheet.create({
     width: "100%",
     marginVertical: 6,
   },
-  HomeChatView: { minWidth: "10%", marginRight: 5 },
-  RemoteChatView: { minWidth: "10%", marginLeft: 5 },
+  HomeChatView: {
+    maxWidth: Dimensions.get("window").width / 1.41,
+    marginRight: 5,
+  },
+  RemoteChatView: {
+    maxWidth: Dimensions.get("window").width / 1.41,
+    marginLeft: 5,
+  },
   HomeChatText: {
     color: Colors.white,
     backgroundColor: Colors.googleblue,
@@ -313,8 +329,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: "#f4f4f4",
   },
-  headText: { fontSize: 18 },
-  headText1: { fontSize: 20 },
+  headText: { fontSize: 16, fontFamily: "sans-serif" },
+  headText1: { fontSize: 20, fontFamily: "sans-serif" },
   bottomText: { fontSize: 16, color: Colors.grey },
   Header: {
     flexDirection: "row",

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Swiper from "react-native-swiper";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {
+  Dimensions,
   Modal,
   View,
   StatusBar,
@@ -67,11 +68,12 @@ const Myprofile = (props) => {
     props.socket.disconnect();
   };
   const ListUserImage = () => {
+    const win= Dimensions.get('window')
     return Pictures ? (
       Pictures.map((item, index) => (
         <View key={index} style={styles.slider}>
-          <Image
-            style={{ ...styles.tinyLogo }}
+          <Image resizeMode="contain"
+             style={{ ...styles.tinyLogo,width:win.width,height:win.width }}
             source={{
               uri: item.url,
             }}
@@ -85,7 +87,7 @@ const Myprofile = (props) => {
 
   return (
     <View style={styles.Container}>
-      <Modal style={{ flex: 1 }} visible={isvisible} animationType="slide">
+      <Modal onRequestClose={handleVisibleModal} style={{ flex: 1 }} visible={isvisible} animationType="slide">
         <View style={{ flex: 1 }}>
           <EditProfile
             loading={props.loading}
@@ -100,6 +102,7 @@ const Myprofile = (props) => {
             autoplay={true}
             style={styles.wrapper}
             showsButtons={true}
+            dotColor="grey"
           >
             {/* <View style={styles.slider}>
               <Image
@@ -135,7 +138,7 @@ const Myprofile = (props) => {
               </Text>
 
               <Text style={styles.smallText}>
-                <Icon name="user" size={12} /> {Age} years
+                <Icon name="user" size={12} /> {Age ? `${Age} years` : null}
               </Text>
               <Text style={{ ...styles.smallText }}>
                 <Icon name="map-pin" size={12} /> {county}, {state}
@@ -278,7 +281,7 @@ const Myprofile = (props) => {
 
 const styles = StyleSheet.create({
   tinyLogo: {
-    width: 400,
+    width: '100%',
     height: 400,
     margin: 9,
     borderRadius: 2,
